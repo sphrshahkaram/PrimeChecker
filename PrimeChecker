@@ -1,0 +1,49 @@
+import numpy as np
+
+def is_prime(x):
+    if x < 2:
+        return False
+    return not np.any([x % i == 0 for i in range(2, int(np.sqrt(x)) + 1)])
+
+def sieve_of_eratosthenes(limit):
+    sieve = np.ones(limit + 1, dtype=bool)
+    sieve[:2] = False  # 0 and 1 are not prime numbers
+    for num in range(2, int(np.sqrt(limit)) + 1):
+        if sieve[num]:
+            sieve[num*num:limit+1:num] = False
+    return np.nonzero(sieve)[0]
+
+def check_prime_range(start, end):
+    if start > end:
+        return []
+    primes = sieve_of_eratosthenes(end)
+    return [p for p in primes if p >= start]
+
+def main():
+    print("Prime Number Checker")
+    choice = input("Do you want to check a single number or a range? (single/range): ").strip().lower()
+    
+    try:
+        if choice == 'single':
+            x = int(input("Enter the number to check: "))
+            if is_prime(x):
+                print(f"{x} is a prime number.")
+            else:
+                print(f"{x} is not a prime number.")
+        elif choice == 'range':
+            start = int(input("Enter the start of the range: "))
+            end = int(input("Enter the end of the range: "))
+            primes = check_prime_range(start, end)
+            print(f"Prime numbers between {start} and {end}: {primes}")
+            save_choice = input("Do you want to save the results to a file? (yes/no): ").strip().lower()
+            if save_choice == 'yes':
+                with open("prime_numbers.txt", "w") as file:
+                    file.write(f"Prime numbers between {start} and {end}: {primes}\n")
+                print("Results saved to prime_numbers.txt")
+        else:
+            print("Invalid choice. Please enter 'single' or 'range'.")
+    except ValueError:
+        print("Invalid input. Please enter a valid number.")
+
+if __name__ == "__main__":
+    main()
